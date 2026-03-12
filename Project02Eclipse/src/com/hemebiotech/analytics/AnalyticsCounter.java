@@ -5,36 +5,39 @@ import java.io.FileReader;
 import java.io.FileWriter;
 
 public class AnalyticsCounter {
-	private static int headacheCount = 0;	// initialize to 0
-	private static int rashCount = 0;		// initialize to 0
-	private static int pupilCount = 0;		// initialize to 0
+	private static int headacheCount = 0;
+	private static int rashCount = 0;
+	private static int pupilCount = 0;
 	
 	public static void main(String args[]) throws Exception {
-		// first get input
-		BufferedReader reader = new BufferedReader (new FileReader("symptoms.txt"));
+		BufferedReader reader = new BufferedReader(
+				new FileReader("./symptoms.txt"));
 		String line = reader.readLine();
 
-		int i = 0;	// set i to 0
+		int i = 0;
 		int headCount = 0;	// counts headaches
 		while (line != null) {
-			i++;	// increment i
+			i++;
 			System.out.println("symptom from file: " + line);
 			if (line.equals("headache")) {
 				headCount++;
+
+				headacheCount++; // Correction : incrémentation de la valeur
 				System.out.println("number of headaches: " + headCount);
 			}
-			else if (line.equals("rush")) {
+			else if (line.equals("rash")) { // Correction d'une faute de frappe rush pour rash
 				rashCount++;
 			}
-			else if (line.contains("pupils")) {
+			else if (line.equals("pupils")) { // Correction de contains en le remplaçant par equals plus adapté et correspondant aux autres conditions
 				pupilCount++;
 			}
 
-			line = reader.readLine();	// get another symptom
+			line = reader.readLine();
 		}
-		
-		// next generate output
-		FileWriter writer = new FileWriter ("result.out");
+
+		reader.close();
+
+		FileWriter writer = new FileWriter("./result.out");
 		writer.write("headache: " + headacheCount + "\n");
 		writer.write("rash: " + rashCount + "\n");
 		writer.write("dialated pupils: " + pupilCount + "\n");
