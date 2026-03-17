@@ -17,8 +17,8 @@ public class AnalyticsCounter {
 				 * Try with ressources here to handle the case if the exception happens and to still be able to close it.
 				 */
 				){
-			String line = reader.readLine();
-			while (line != null) {
+			String line;
+			while ((line = reader.readLine()) != null) {
 				System.out.println("symptom from file: " + line);
 				if (line.equals("headache")) {
 					headacheCount++;
@@ -33,8 +33,6 @@ public class AnalyticsCounter {
 				} else if (line.contains("pupils")) {
 					pupilCount++;
 				}
-
-				line = reader.readLine();
 			}
 			writer.write("headache: " + headacheCount + "\n");
 			writer.write("rash: " + rashCount + "\n");
