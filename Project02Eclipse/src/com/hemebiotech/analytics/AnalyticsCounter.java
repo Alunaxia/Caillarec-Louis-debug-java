@@ -1,43 +1,85 @@
 package com.hemebiotech.analytics;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 public class AnalyticsCounter {
 
-	public static void main(String args[]) {
+	private ISymptomReader reader;
+	private ISymptomWriter writer;
 
-		Map<String, Integer> symptoms = new TreeMap<>();
+	/**
+	 * Constructor
+	 * @param reader
+	 * @param writer
+	 */
+	public AnalyticsCounter(ISymptomReader reader, ISymptomWriter writer) {
+		this.reader = reader;
+		this.writer = writer;
+	}
 
-		try (
-				FileWriter writer = new FileWriter("./result.out");
-				BufferedReader reader = new BufferedReader(new FileReader("./symptoms.txt"));
-				/**
-				 * Try with ressources here to handle the case if the exception happens and to still be able to close it.
-				 */
-				){
-			String line;
-			while ((line = reader.readLine()) != null) {
-				System.out.println("symptom from file: " + line);
-				symptoms.put(line, symptoms.getOrDefault(line, 0) + 1);
-				/**
-				 * Reading results from symptoms.txt
-				 */
+	/**
+	 * List all symptoms from the file symptoms.txt
+	 * @return
+	 */
+	public List<String> getSymptoms() {
+		return reader.getSymptoms();
+	}
+
+	/**
+	 *
+	 * @param symptoms Count symptoms.
+	 * @return
+	 */
+	public Map<String, Integer> countSymptoms(List<String> symptoms) {
+
+		Map<String, Integer> result = new TreeMap<>();
+
+		for (String symptom : symptoms) {
+
+			if (symptom != null) {
+				symptom = symptom.trim().toLowerCase();
+
+				result.put(symptom, result.getOrDefault(symptom, 0) + 1);
 			}
-			for (Map.Entry<String, Integer> entry : symptoms.entrySet()) {
-				writer.write(entry.getKey() + ": " + entry.getValue() + "\n");
-				/**
-				 * Writing results in the file
-				 */
-			}
-		} catch (Exception e) {
-			System.out.println("Erreur lors du traitement du fichier : " + e.getMessage());
-			/**
-			 * Exception handled by this try / catch
-			 */
 		}
+
+		return result;
+	}
+
+	/**
+	 *
+	 * @param symptoms Ordering symptoms if they weren't (They already should be).
+	 * @return
+	 */
+	public Map<String, Integer> sortSymptoms(Map<String, Integer> symptoms) {
+		return new TreeMap<>(symptoms);
+	}
+
+	/**
+	 *
+	 * @param symptoms writings Symptoms in result.out
+	 */
+	public void writeSymptoms(Map<String, Integer> symptoms) {
+		writer.writeSymptoms(symptoms);
+	}
+
+	/**
+	 *
+	 * @param args Main Function redone.
+	 */
+	public static void main(String[] args) {
+
+		ISymptomReader reader = new ReadSymptomDataFromFile("symptoms.txt");
+		ISymptomWriter writer = new WriteSymptomDataToFile("result.out");
+
+		AnalyticsCounter analytics = new AnalyticsCounter(reader, writer);
+
+		List<String> symptoms = analytics.getSymptoms();
+		Map<String, Integer> counted = analytics.countSymptoms(symptoms);
+		Map<String, Integer> sorted = analytics.sortSymptoms(counted);
+
+		analytics.writeSymptoms(sorted);
 	}
 }

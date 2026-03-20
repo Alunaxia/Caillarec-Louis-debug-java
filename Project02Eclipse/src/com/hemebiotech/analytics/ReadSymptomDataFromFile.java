@@ -32,7 +32,6 @@ public class ReadSymptomDataFromFile implements ISymptomReader {
 				while ((line = reader.readLine()) != null) {
 					result.add(line);
 				}
-				reader.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
